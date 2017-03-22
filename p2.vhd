@@ -1,31 +1,32 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity addmatrix_tb
+entity addmatrix_tb is
 end addmatrix_tb;
 
+-- http://www.alteraforum.com/forum/showthread.php?t=30640
 architecture addmatrix_tb_arch of addmatrix_tb is
---  type matrix is array(integer range <>,
-                       integer range <>) of real;
+--  type matrix is array(natural range <>,natural range <>) of integer; 
+  type row_t is array(integer range <>) of integer;
+  type matrix_t is array(integer range <>) of row_t;
 
     -- procedure params have direction
     -- C <= A+B (matrix)
-    procedure ADDMATRIX(signal a : in matrix; 
-                        signal b : in matrix;
-                        signal c : out matrix) is
+    procedure ADDMATRIX(signal a : in matrix_t; 
+                        signal b : in matrix_t;
+                        signal c : out matrix_t) is
       -- local var declarations
-      variable c_tmp : matrix(a'range, a(a'low)'range) := (others => 0);
+      variable c_tmp : matrix_t(a'range) := (others => 0);
+      variable row_tmp : row_t(a'range(a'low)) := (others => 0);
     begin
       -- check that matricies have same # of rows
       assert(a'length=c'length) report "Error rows mismatch" severity error;
       -- check that each row has the same number of columns in both matricies
       for i in a'low to a'high loop
-	-- sequential statements
-        assert(a(i)'length=b(i)'length) report "Error columns mismatch" serverity error;
-        for j in a(i)'low to a(i)'high loop
-          c(i)(j) := a(i)(j)+b(i)(j);
-        end loop
-      end loop
+        assert(a(i)'length=b(i)'length) report "Error columns mismatch" severity;
+          c_tmp(i)(j) := a(i)(j)+b(i)(j);
+        end loop;
+      end loop;
           c <= c_tmp;
     end ADDMATRIX;
 
